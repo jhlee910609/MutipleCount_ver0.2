@@ -40,8 +40,14 @@ public class MainActivity extends AppCompatActivity {
         Counter counter_1 = new Counter(0, handler);
         counter_1.start();
 
-        Counter counter_2 = new Counter(0, handler);
+        Counter counter_2 = new Counter(1, handler);
         counter_2.start();
+
+        Counter counter_3 = new Counter(2, handler);
+        counter_3.start();
+
+        Counter counter_4 = new Counter(3, handler);
+        counter_4.start();
     }
 
      class Counter extends Thread{
@@ -62,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                  Message msg = new Message();
                  msg.what = MainActivity.SET_COUNT;
                  msg.arg1 = tvIndex;
-                 msg.arg2 = tvIndex;
+                 msg.arg2 = count;
 
                  handler.sendMessage(msg);
 
