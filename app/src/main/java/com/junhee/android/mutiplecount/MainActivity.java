@@ -13,12 +13,11 @@ public class MainActivity extends AppCompatActivity {
     public static final int SET_COUNT = 91240;
 
     // sub thread에서 전달받은 메시지를 받기 위한 컨트롤러인 handler를 생성함
-    Handler handler = new Handler(){
+    Handler handler = new Handler() {
         // sub thread에서 메시지를 전달하면 handleMessage 함수 동작
-
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case SET_COUNT:
                     tvs[msg.arg1].setText("" + msg.arg2);
                     break;
@@ -32,53 +31,71 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        for(int i =0; i < 4; i++){
+        for (int i = 0; i < 4; i++) {
             // 텍스트로 아이디 가져오기
-            int resId = getResources().getIdentifier("textView" + (1+i), "id", getPackageName());
+            int resId = getResources().getIdentifier("textView" + (1 + i), "id", getPackageName());
             tvs[i] = (TextView) findViewById(resId);
         }
         Counter counter_1 = new Counter(0, handler);
         counter_1.start();
 
-        Counter counter_2 = new Counter(1, handler);
-        counter_2.start();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Counter counter_2 = new Counter(1, handler);
+                counter_2.start();
+            }
+        }, 1000);
 
-        Counter counter_3 = new Counter(2, handler);
-        counter_3.start();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Counter counter_3 = new Counter(2, handler);
+                counter_3.start();
+            }
+        }, 2000);
 
-        Counter counter_4 = new Counter(3, handler);
-        counter_4.start();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                Counter counter_4 = new Counter(3, handler);
+                counter_4.start();
+            }
+        }, 3000);
     }
 
-     class Counter extends Thread{
-         Handler handler;
-         int tvIndex;
-         int count = 0;
+    class Counter extends Thread {
 
-         public Counter(int tvIndex, Handler handler){
-             this.tvIndex = tvIndex;
-             this.handler = handler;
-         }
+        Handler handler;
+        int tvIndex;
+        int count = 0;
 
-         @Override
-         public void run() {
-             for(int i=0; i<10; i++){
-                 // sub thread에서 ui 조작하기 위해 핸들러를 통해 메시지 전달
-                 count++;
-                 Message msg = new Message();
-                 msg.what = MainActivity.SET_COUNT;
-                 msg.arg1 = tvIndex;
-                 msg.arg2 = count;
+        public Counter(int tvIndex, Handler handler) {
+            this.tvIndex = tvIndex;
+            this.handler = handler;
+        }
 
-                 handler.sendMessage(msg);
+        @Override
+        public void run() {
+            for (int i = 0; i < 10; i++) {
+                // sub thread에서 ui 조작하기 위해 핸들러를 통해 메시지 전달
+                count++;
+                Message msg = new Message();
+                msg.what = MainActivity.SET_COUNT;
+                msg.arg1 = tvIndex;
+                msg.arg2 = count;
 
-                 try {
-                     Thread.sleep(1000);
-                 } catch (InterruptedException e) {
-                     e.printStackTrace();
-                 }
-             }
-         }
-     }
+                handler.sendMessage(msg);
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }
+
 
